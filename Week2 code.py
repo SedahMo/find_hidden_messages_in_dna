@@ -181,7 +181,7 @@ def IterativeNeighbors(pattern, d):
     #     for j in count:
     #         neighbor_dict[j] = neighbor_dict.get(j, ImmediateNeighbors(j))
     #         neighbor_set.update(neighbor_dict[j])
-    return neighbor_set
+    # return neighbor_set
     # with open("print_temp.txt", "w") as f:
     #     print(*neighbor_set, sep = '\n', file = f)
     # return neighbor_set
@@ -241,6 +241,6 @@ def FrequentWordwithMismatch2(text, k, d):
     return maxlist
 
 
-f = open('E_coli.txt', 'r')
-a = f.readline()
-FrequentWordwithMismatch2(a, 9, 1)
+# f = open('E_coli.txt', 'r')
+# a = f.readline()
+# FrequentWordwithMismatch2(a, 9, 1)
