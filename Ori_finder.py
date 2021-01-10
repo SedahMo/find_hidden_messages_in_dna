@@ -6,6 +6,7 @@ Created on Sat Jan  9 13:38:03 2021
 @author: Monica Ruan
 """
 import time
+import argparse
 start = time.process_time()
 try:
     import matplotlib.pyplot as plt
@@ -107,8 +108,8 @@ def FreqWordwithApproMatch(sequence, k, d):
     return maxlist
 
 
-def main(file, mode='start', output=True, header=False, k=9, d=1, length=500,
-         matchunion=False):
+def main(file, mode='center', output=True, header=False, k=9, d=1, length=1000,
+         intersection=False):
     """Find minimum C-G skew points and frequent words.
 
     Works for Escherichia coli and Salmonella enterica.
@@ -118,7 +119,7 @@ def main(file, mode='start', output=True, header=False, k=9, d=1, length=500,
     window related to the first minimum skew position.
     Mathcuinon controls whether using the union of the results from d=1 and d=2.
     """
-    # Open file and create a handle.
+    # Open file, create a handle, parse the text and make the sequence.
     with open(file, 'r') as handle:
         if header is True:
             line_list = handle.read().splitlines()[1:]
@@ -130,9 +131,11 @@ def main(file, mode='start', output=True, header=False, k=9, d=1, length=500,
     print("The mode is:", mode,
           "\nThe window length is:", length,
           "\nThe k-mer length is:", k)
-    if matchunion is True:
-        print("The union of the results by setting d=1 or d=2")
-    if matchunion is False:
+    if intersection is True:
+        print("The mismatch tolerance is equal or less than", str(d) + ";",
+              "results are shown as the intersection of all tolerance under",
+              d)
+    if intersection is False:
         print("The mismatch tolerance is:", d)
     # Find minimum skewpoints and frequent words within the related window.
     skew_pts = MinSkew(sequence)
@@ -143,16 +146,18 @@ def main(file, mode='start', output=True, header=False, k=9, d=1, length=500,
     if mode == 'start':
         window = sequence[(first_skew_pt): (first_skew_pt + length)]
     elif mode == 'center':
-        window = sequence[(first_skew_pt - length): (first_skew_pt + length)]
+        window = sequence[(first_skew_pt - int(length/2)): (first_skew_pt + int(length/2))]
     elif mode == 'end':
         window = sequence[(first_skew_pt - length): (first_skew_pt)]
-    if matchunion is False:
+    if intersection is False:
         worddict[first_skew_pt] = FreqWordwithApproMatch(window, k, d)
-    elif matchunion is True:
-        set_1 = set(FreqWordwithApproMatch(window, k, d=0))
-        set_2 = set(FreqWordwithApproMatch(window, k, d=1))
-        worddict[first_skew_pt] = list(set_1 & set_2)
-    # Check if the correct DnaA box is found.
+    elif intersection is True:
+        set_words = set(FreqWordwithApproMatch(window, k, d=0))
+        if d >= 1:
+            for i in range(1, d+1):
+                set_words &= (set(FreqWordwithApproMatch(window, k, d=i)))
+        worddict[first_skew_pt] = list(set_words)
+    # Check if the specified DnaA box is found.
     DnaA_box = set(["TTATCCACA", "TTATCCAAA",
                    "TTATCAACA", "TTATCAAAA"])
     if set(list(worddict.values())[0]) & DnaA_box != set():
@@ -160,14 +165,16 @@ def main(file, mode='start', output=True, header=False, k=9, d=1, length=500,
     else:
         answer = "No"
     for m, n in worddict.items():
-        print("Approximate frequent words within",
+        print("Find total " + str(len(list(worddict.values())[0])),
+              "approximate frequent words within",
               str(length) + 'bps',
               str(mode) + "ed", "at",
               str(m),
               "(..." + str(sequence[m: (m+10)]) + "...)",
               ":\n",
               n,
-              "\nFind the correct DnaA box(5'-TTATC[CA]A[CA]A-3')?", *[answer])
+              "\nFind the defined DnaA box (5'-TTATC[CA]A[CA]A-3')?",
+              *[answer])
     try:
         end = time.process_time()
         print("Run time:", end - start)
@@ -180,11 +187,38 @@ def main(file, mode='start', output=True, header=False, k=9, d=1, length=500,
         print("Matplotlib is not compatible with the interpreter.")
 
 
-main('Salmonella_enterica.txt', mode='center', length=500, header=True,
-     matchunion=False, d=1)
+try:
+    if __name__ == '__main__':
+        # Add shell command parser.
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--file')
+        parser.add_argument('--mode')
+        parser.add_argument('--output')
+        parser.add_argument('--header')
+        parser.add_argument('--k')
+        parser.add_argument('--d')
+        parser.add_argument('--length')
+        parser.add_argument('--intersection')
+        args = parser.parse_args()
+        main(file=str(args.file) if args.file is not None else 'Salmonella_enterica.txt',
+             mode=str(args.mode) if args.mode is not None else 'center',
+             # Argument following else is the default.
+             output=False if args.output in ['False', 'F'] else True,
+             header=False if args.header in ['False', 'F'] else True,
+             k=int(args.k) if args.k is not None else 9,
+             d=int(args.d) if args.d is not None else 1,
+             length=int(args.length) if args.length is not None else 1000,
+             intersection=True if args.intersection in ['True', 'T'] else False)
+except:
+    print("===========================Error occured. Did you " +
+          "correctly specify header?===========================\n",
+          "===========================Use --head True for files with header" +
+          "===========================")
+    raise
 
 # f = ''.join(open(file, 'r').readlines()[1:])
 # TTATCCACA
 # https://string-db.org/network/220341.16505650
 # https://string-db.org/network/316407.85676342
 # (dnaA box): 5'-TTATC[CA]A[CA]A-3'
+
