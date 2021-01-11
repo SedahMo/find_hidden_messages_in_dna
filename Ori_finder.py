@@ -191,7 +191,8 @@ try:
     if __name__ == '__main__':
         # Add shell command parser.
         parser = argparse.ArgumentParser()
-        parser.add_argument('--file')
+        parser.add_argument('-f', '--file',
+                            help='Input the file path.')
         parser.add_argument('--mode')
         parser.add_argument('--output')
         parser.add_argument('--header')
@@ -209,7 +210,7 @@ try:
              d=int(args.d) if args.d is not None else 1,
              length=int(args.length) if args.length is not None else 1000,
              intersection=True if args.intersection in ['True', 'T'] else False)
-except:
+except (KeyError, ValueError):
     print("===========================Error occured. Did you " +
           "correctly specify header?===========================\n",
           "===========================Use --head True for files with header" +

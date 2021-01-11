@@ -98,10 +98,42 @@ def IterativeNeighbors(pattern, d):
         for j in count:
             neighbor_dict[j] = neighbor_dict.get(j, ImmediateNeighbors(j))
             neighbor_set.update(neighbor_dict[j])
-    with open("print_temp.txt", "w") as f:
-        print(*neighbor_set, sep = '\n', file = f)
+    return neighbor_set
+    # with open("print_temp.txt", "w") as f:
+    #     print(*neighbor_set, sep = '\n', file = f)
     
 
 
 for i in {1,2,3,4}:
     print(i)
+    
+    
+    
+def IterativeNeighbors(pattern, d):
+    neighbor_set = set([pattern])
+    temp_set_1 = set([pattern])
+    neighbor_dict = {}
+    for i in range(d):
+        if i == 0:
+            count = iter(temp_set_1.copy())
+        else:
+            temp_set_2 = neighbor_set.copy()
+            neighbor_set = neighbor_set.union(temp_set_1)
+            temp_set_1 = temp_set_1.difference(temp_set_2)
+            count = iter(temp_set_1.copy())
+            temp_set_1 = set()
+        for j in count:
+            neighbor_dict[j] = ImmediateNeighbors(j)
+            temp_set_1.update(neighbor_dict[j])
+    return neighbor_set
+
+
+def IterativeNeighbors(pattern, d):
+    neighbor_set = set([pattern])
+    neighbor_dict = {}
+    for i in range(d):
+        count = iter(neighbor_set.copy())
+        for j in count:
+            neighbor_dict[j] = neighbor_dict.get(j, ImmediateNeighbors(j))
+            neighbor_set.update(neighbor_dict[j])
+    return neighbor_set
