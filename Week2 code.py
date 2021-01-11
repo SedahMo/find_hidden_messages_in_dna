@@ -150,22 +150,20 @@ def ImmediateNeighbors(pattern):
 
 def IterativeNeighbors(pattern, d):
     neighbor_set = set([pattern])
-    temp_set_1 = set([pattern])
+    temp_set = set([pattern])
     neighbor_dict = {}
     for i in range(d):
         if i == 0:
             count = iter(set([pattern]))
         else:
-            temp_set_2 = neighbor_set.copy()
-            neighbor_set = neighbor_set.union(temp_set_1)
-            temp_set_1 = temp_set_1.difference(temp_set_2)
-            count = iter(temp_set_1.copy())
-            temp_set_1 = set()
+            count = iter(temp_set - (neighbor_set & temp_set))
+            neighbor_set |= temp_set
+            temp_set = set()
         for j in count:
             neighbor_dict[j] = ImmediateNeighbors(j)
-            temp_set_1.update(neighbor_dict[j])
-        if i == 0:
-            neighbor_set = neighbor_set.union(temp_set_1)
+            temp_set.update(neighbor_dict[j])
+        if i == d - 1:
+            neighbor_set |= temp_set
     return neighbor_set
             # try:
             #     neighbor_dict[j]
@@ -241,6 +239,7 @@ def FrequentWordwithMismatch2(text, k, d):
     return maxlist
 
 
+print(FrequentWordwithMismatch('ATGACCGGGATACTGATAGAAGAAAGGTTGGGGGCGTACACATTAGATAAACGTATGAAGTACGTTAGACTCGGCGCCGCCGACCCCTATTTTTTGAGCAGATTTAGTGACCTGGAAAAAAAATTTGAGTACAAAACTTTTCCGAATACAATAAAACGGCGGGATGAGTATCCCTGGGATGACTTAAAATAATGGAGTGGTGCTCTCCCGATTTTTGAATATGTAGGATCATTCGCCAGGGTCCGAGCTGAGAATTGGATGCAAAAAAAGGGATTGTCCACGCAATCGCGAACCAACGCGGACCCAAAGGCAAGACCGATAAAGGAGATCCCTTTTGCGGTAATGTGCCGGGAGGCTGGTTACGTAGGGAAGCCCTAACGGACTTAATATAATAAAGGAAGGGCTTATAGGTCAATCATGTTCTTGTGAATGGATTTAACAATAAGGGCTGGGACCGCTTGGCGCACCCAAATTCAGTGTGGGCGAGCGCAACGGTTTTGGCCCTTGTTAGAGGCCCCCGTATAAACAAGGAGGGCCAATTATGAGAGAGCTAATCTATCGCGTGCGTGTTCATAACTTGAGTTAAAAAATAGGGAGCCCTGGGGCACATACAAGAGGAGTCTTCCTTATCAGTTAATGCTGTATGACACTATGTATTGGCCCATTGGCTAAAAGCCCAACTTGACAAATGGAAGATAGAATCCTTGCATACTAAAAAGGAGCGGACCGAAAGGGAAGCTGGTGAGCAACGACAGATTCTTACGTGCATTAGCTCGCTTCCGGGGATCTAATAGCACGAAGCTTACTAAAAAGGAGCGGA', 15, 4))
 # f = open('E_coli.txt', 'r')
 # a = f.readline()
 # FrequentWordwithMismatch2(a, 9, 1)
