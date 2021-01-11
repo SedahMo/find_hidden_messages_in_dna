@@ -20,7 +20,7 @@ except ModuleNotFoundError:
 
 
 def MinSkew(sequence):
-    """Calculate the G-C skew scores along the sequence."""
+    """Calculate G-C skew scores along the sequence."""
     skew = 0
     skewscore = {'A': 0, 'T': 0, 'C': -1, 'G': 1}
     walk = [0]
@@ -37,7 +37,7 @@ def MinSkew(sequence):
 
 
 def HammingDistance(sequence_1, sequence_2):
-    """Calculate hamming distance (sequence mismatch score)."""
+    """Calculate the hamming distance (sequence mismatch score)."""
     ham = 0
     for i in range(len(sequence_1)):
         if sequence_1[i] != sequence_2[i]:
@@ -120,13 +120,12 @@ def main(file, mode='center', output=True, header=False, k=9, d=1, length=1000,
          intersection=False, DnaAbox='TTATCCACA'):
     """Find minimum C-G skew points and frequent words.
 
-    Works for Escherichia coli and Salmonella enterica.
-    The default length of the window around skew point is length=500,
-    kmer length kmer=9, mismatch tolerance d=1.
+    Default parameters are set for Salmonella enterica.
+    The default length of the window around the skew point is length = 1000,
+    the kmer length kmer=9, mismatch tolerance d=1.
     Mode can be set to "start", "center" or "back" which is the position of the
-    window related to the first minimum skew position.
-    Mathcuinon controls whether using the union of the results from d=1 and \
-    d=2.
+    window related to the first minimum skew point.
+    See README.md or use --help in the shell for more information.
     """
     # Open file, create a handle, parse the text and make the sequence.
     # readline() is much slower than read() or readlines().
@@ -174,8 +173,9 @@ def main(file, mode='center', output=True, header=False, k=9, d=1, length=1000,
                 set_words &= (set(FreqWordwithApproMatch(window, k, d=i)))
         worddict[first_skew_pt] = list(set_words)
     # Check if the specified DnaA box is found.
-    # worddict.values() returns a "view" class of values, should use list() to
-    # release it. However, the result is a list of a list so slice [0] is used.
+    # worddict.values() returns a "view" class of values; list() should be used
+    # to release it. However, the result is a list of a list so slice [0] is
+    # used.
     if DnaAbox in list(worddict.values())[0]:
         answer = "Yes"
     else:
@@ -235,10 +235,10 @@ try:
                             help='The length of the searching window. The \
                                 default is 1000.')
         parser.add_argument('-i', '--intersection', type=str,
-                            help='Do you want to calculate all the frequent \
-                                words for hamming distance is equal or less \
-                                than d and print the intersection of the \
-                                the set of words? The default is "False".')
+                            help='Calculate all the frequent words for \
+                                hamming distance that is equal or less than d \
+                                and print the intersection of the set of \
+                                words. The default is "False".')
         parser.add_argument('-b', '--DnaAbox', type=str,
                             help='Input the concensus sequence of DnaA \
                                 binding box. The defaul is "TTATCCACA", the \
@@ -263,10 +263,3 @@ except (KeyError, ValueError):
           "===========================Use --head True for files with header" +
           "===========================")
     raise
-
-
-# https://string-db.org/network/220341.16505650
-# https://string-db.org/network/316407.85676342
-# (dnaA box): 5'-TTATC[CA]A[CA]A-3'
-# DnaAbox = set(["TTATCCACA", "TTATCCAAA",
-#                 "TTATCAACA", "TTATCAAAA"])
