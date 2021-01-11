@@ -9,12 +9,11 @@ Created on Sat Jan  9 13:38:03 2021
 
 
 import time
-import argparse
 start = time.process_time()
 try:
     import matplotlib.pyplot as plt
 except ModuleNotFoundError:
-    None
+    pass
 
 # %% Functional module: Find the minimum G-C skew point.
 
@@ -93,18 +92,18 @@ def ReverseComplement(Pattern):
 
 def FreqWordwithApproMatch(sequence, k, d):
     """Find the approximate (with distance d) frequent k-mer in a sequence."""
-    thisdict = {}
     k_neighbor = set()
     comp = ReverseComplement(sequence)
     # Gnerate all kmer neighbors in the sequence.
     for i in range(len(sequence) - k + 1):
         kmer = sequence[i: (i + k)]
-        k_neighbor = k_neighbor.union(IterativeNeighbors(kmer, d))
+        k_neighbor |= IterativeNeighbors(kmer, d)
     # Generate all kmer neighbors in the complementary sequence.
     for i in range(len(comp) - k + 1):
         kmer = sequence[i: (i + k)]
-        k_neighbor = k_neighbor.union(IterativeNeighbors(kmer, d))
+        k_neighbor |= IterativeNeighbors(kmer, d)
     # Calculate the frequency of all the kmer neighbors and find the maximum.
+    thisdict = {}
     for kmer in k_neighbor:
         thisdict[kmer] = ApproPatternCount(kmer, sequence, d) + \
                          ApproPatternCount(kmer, comp, d)
@@ -204,11 +203,12 @@ def main(file, mode='center', output=True, header=False, k=9, d=1, length=1000,
         print("Matplotlib is not compatible with the interpreter.")
 
 
-# %% UI module: Interact with the user.
+# %% UI and execution module: Interact with the user.
 
 
-try:
-    if __name__ == '__main__':
+if __name__ == '__main__':
+    import argparse
+    try:
         # Add shell command parser.
         parser = argparse.ArgumentParser()
         parser.add_argument('-f', '--file', type=str,
@@ -244,22 +244,23 @@ try:
                                 binding box. The defaul is "TTATCCACA", the \
                                 concensus sequence of E.Coli and S.Enterica.')
         args = parser.parse_args()
+        # Call the main function.
         # Argument following else is the default.
         main(file=str(args.file) if args.file is not None
              else 'Salmonella_enterica.txt',
              mode=str(args.mode) if args.mode is not None else 'center',
-             output=False if args.output in ['False', 'F'] else True,
-             header=False if args.header in ['False', 'F'] else True,
+             output=False if args.output in ['False', 'F', '0'] else True,
+             header=False if args.header in ['False', 'F', '0'] else True,
              k=args.k if args.k is not None else 9,
              d=args.d if args.d is not None else 1,
              length=args.length if args.length is not None else 1000,
-             intersection=True if args.intersection in ['True', 'T']
+             intersection=True if args.intersection in ['True', 'T', '1']
              else False,
              DnaAbox=args.DnaAbox if args.DnaAbox is not None
              else 'TTATCCACA')
-except (KeyError, ValueError):
-    print("===========================Error occured. Did you " +
-          "correctly specify header?===========================\n",
-          "===========================Use --head True for files with header" +
-          "===========================")
-    raise
+    except (KeyError, ValueError):
+        print("===========================Error occured. Did you " +
+              "correctly specify header?===========================\n",
+              "===========================Use --head True for files with \
+              header" + "===========================")
+        raise
