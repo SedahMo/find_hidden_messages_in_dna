@@ -17,8 +17,7 @@ def ProfileMostPKmer(sequence, k, np_matrix):
     for i in range(len(sequence) - k + 1):
         p = 1
         kmer = sequence[i: (i + k)]
-        for col in range(k):
-            letter = kmer[col]
+        for col, letter in enumerate(kmer):
             p *= np_matrix[rows[letter], col]
         if p > max_p:
             max_p = p
