@@ -20,7 +20,7 @@ def ProfileMatrix(kmer_list, k, t, mode):  # nrow = t, ncol = k
     if mode == 'profile':
         return np_matrix / t
     if mode == 'score':
-        return t * k - sum([max(np_matrix[:, i]) for i in range(k)])
+        return t * k - sum((np.amax(np_matrix, 0)))
 
 
 def GreedyMotifSearch(dna_list, k, t):
@@ -33,7 +33,7 @@ def GreedyMotifSearch(dna_list, k, t):
         for sequence in dna_list_iter:
             promatrix = ProfileMatrix(kmer_list, k, len(kmer_list),
                                       mode='profile')
-            prokmer = findkmer(sequence, k, promatrix)[0]  # findkmer mk a list
+            prokmer = findkmer(sequence, k, promatrix)
             kmer_list.append(prokmer)
         kmer_list_score = ProfileMatrix(kmer_list, k, t, mode='score')
         # Compare the hamming scores, get the smaller one.

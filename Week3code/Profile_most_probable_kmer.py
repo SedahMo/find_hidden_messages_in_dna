@@ -24,7 +24,7 @@ def ProfileMostPKmer(sequence, k, np_matrix):
             motif = [kmer]
         elif p == max_p:
             motif.append(kmer)
-    return motif
+    return motif[0]
 
 
 if __name__ == "__main__":
