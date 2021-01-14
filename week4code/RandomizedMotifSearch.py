@@ -6,9 +6,11 @@ Created on Thu Jan 14 00:53:56 2021
 @author: babemomo
 """
 import random as rd
-import W4library as w4
+# import W4library as w4
+import W4library_basic as w4  # without numpy
 import time
 
+# rd.seed(0)
 
 def RandomizedMotifSearch(dna_list, k, t):
     """Generate consensus motifs by randomly choosing sequences from dna_list.
