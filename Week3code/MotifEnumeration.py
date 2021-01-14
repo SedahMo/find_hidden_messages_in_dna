@@ -6,7 +6,9 @@ Created on Mon Jan 11 14:10:41 2021
 @author: Monica Ruan
 """
 
-    import W3library as w3
+import W3library as w3
+
+
 def MotifEnumeration(dna_list, k, d):
     pattern_set = None
     for sequence in dna_list:
