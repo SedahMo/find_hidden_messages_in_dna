@@ -12,6 +12,10 @@ rows = {'A': 0, 'C': 1, 'G': 2, 'T': 3}
 
 
 def ProfileMatrix(kmer_list, k, t, mode):  # nrow = t, ncol = k
+    """Input a list of kmers and output a entropy score or profile probilities.
+
+    It can be switch to hamming distance score following #.
+    """
     np_matrix = np.zeros((4, k))  # matrix.shape = 4, k
     for col, colbases in enumerate(zip(*kmer_list)):
         for letter in 'ACGT':
@@ -25,6 +29,7 @@ def ProfileMatrix(kmer_list, k, t, mode):  # nrow = t, ncol = k
     if mode == 'score':
         np_matrix += 1 * pseudo_count
         np_matrix /= (t + 4 * pseudo_count)
+        # entropy score = sigma(-plog_2(p)). Max score of 'ACGT' colume is 2.
         return np.sum(-np_matrix * np.log2(np_matrix))
     if mode == 'entropy':
         np_matrix /= t
@@ -34,6 +39,10 @@ def ProfileMatrix(kmer_list, k, t, mode):  # nrow = t, ncol = k
 
 
 def ProfileMostPKmer(sequence, k, np_matrix):
+    """Input a sequence and a profile matrix (np_matrix), a score-optimized
+    motif is returned.
+
+    Loop through all substrings of the sequence."""
     max_p = 0
     motif = []
     for i in range(len(sequence) - k + 1):

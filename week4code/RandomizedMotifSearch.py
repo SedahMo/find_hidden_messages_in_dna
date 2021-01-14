@@ -11,7 +11,12 @@ import time
 
 
 def RandomizedMotifSearch(dna_list, k, t):
-    """Hi."""
+    """Generate consensus motif by randomly choosing sequences from dna_list.
+
+    Two loops. Outer one is the initiative seeds, the result is super-sensitive
+    to this initiatives. That's why in the inner iteration, we "jump out"
+    immedeiately once it is "derailed".
+    """
     start = True
     for i in range(1000):
         ran_list = [rd.randint(0, len(dna_list[0]) - k) for i in range(t)]
@@ -20,6 +25,7 @@ def RandomizedMotifSearch(dna_list, k, t):
         if start:
             best_seqs = iter_seqs[:]
             start = False
+        # Inner loop. Jump out of the loop if "derailed".
         while True:
             profile = w4.ProfileMatrix(iter_seqs, k, t, mode='profile')
             iter_seqs = [w4.ProfileMostPKmer(seq, k, profile)
@@ -34,8 +40,8 @@ def RandomizedMotifSearch(dna_list, k, t):
 
 
 if __name__ == "__main__":
-    with open('dataset_161_5.txt') as f:
-    # with open(input('Please input the path and press enter: \n')) as f:
+    # with open('dataset_161_5.txt') as f:
+    with open(input('Please input the path and press enter: \n')) as f:
         line_list = f.read().splitlines()
         params = line_list.pop(0).split()
         k = int(params[0])
