@@ -11,11 +11,11 @@ import time
 
 
 def RandomizedMotifSearch(dna_list, k, t):
-    """Generate consensus motif by randomly choosing sequences from dna_list.
+    """Generate consensus motifs by randomly choosing sequences from dna_list.
 
-    Two loops. Outer one is the initiative seeds, the result is super-sensitive
-    to this initiatives. That's why in the inner iteration, we "jump out"
-    immedeiately once it is "derailed".
+    Two loops. Outer one is for generating the initiative seeds, the result
+    is super-sensitive to these initiatives. That's why in the inner iteration,
+    we "jump out" immedeiately once the function is "derailed".
     """
     start = True
     for i in range(1000):
@@ -40,8 +40,8 @@ def RandomizedMotifSearch(dna_list, k, t):
 
 
 if __name__ == "__main__":
-    # with open('dataset_161_5.txt') as f:
-    with open(input('Please input the path and press enter: \n')) as f:
+    with open('dataset_161_5.txt') as f:
+    # with open(input('Please input the path and press enter: \n')) as f:
         line_list = f.read().splitlines()
         params = line_list.pop(0).split()
         k = int(params[0])
