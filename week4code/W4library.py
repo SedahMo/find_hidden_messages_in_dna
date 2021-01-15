@@ -22,6 +22,7 @@ def ProfileMatrix(kmer_list, k, t, mode):  # nrow = t, ncol = k
         np_matrix += 1 * pseudo_count
         np_matrix /= (t + 4 * pseudo_count)
         return np_matrix
+    # # Hamming score
     # if mode == 'score':
     #     return t * k - sum((np.amax(np_matrix, axis=0)))
     if mode == 'score':

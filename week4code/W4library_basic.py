@@ -17,21 +17,20 @@ def ProfileMatrix(kmer_list, k, t, mode):  # nrow = t, ncol = k
     for col, colbases in enumerate(zip(*kmer_list)):
         for row, letter in enumerate('ACGT'):
             matrix[row][col] = colbases.count(letter)
+    # hamming score
+    if mode == 'ham':
+        return t * k - sum([max(col) for col in zip(*matrix)])
     pseudo_count = 0.1
+    for row in range(4):
+        for col in range(k):
+            matrix[row][col] += pseudo_count
+            matrix[row][col] /= (t + 4 * pseudo_count)
     if mode == 'profile':
-        for i in range(4):
-            for j in range(k):
-                matrix[i][j] += pseudo_count
-                matrix[i][j] /= (t + 4 * pseudo_count)
-        # print(matrix)
         return matrix
     if mode == 'score':
-        for i in range(4):
-            for j in range(k):
-                matrix[i][j] += 1 * pseudo_count
-                matrix[i][j] /= (t + 4 * pseudo_count)
-        # entropy score = sigma(-plog_2(p)). Max score of 'ACGT' colume is 2.
-        score = -sum([matrix[i][j] * m.log2(matrix[i][j]) for j in range(k) for i in range(4)])
+        # entropy score = sigma(-p*log_2(p)). Max score of 'ACGT' colume is 2.
+        score = -sum([matrix[row][col] * m.log2(matrix[row][col])
+                     for col in range(k) for row in range(4)])
         return score
 
 
