@@ -10,9 +10,11 @@ import random as rd
 import W4library_basic as w4  # without numpy
 import time
 
+
 # rd.seed(0)
 
-def RandomizedMotifSearch(dna_list, k, t):
+
+def RandomizedMotifSearch(dna_list, k, t, repeat=1000):
     """Generate consensus motifs by randomly choosing sequences from dna_list.
 
     Two loops. Outer one is for generating the initiative seeds, the result
@@ -20,7 +22,7 @@ def RandomizedMotifSearch(dna_list, k, t):
     we "jump out" immedeiately once the function is "derailed".
     """
     start = True
-    for i in range(1000):
+    for i in range(repeat):
         ran_list = [rd.randint(0, len(dna_list[0]) - k) for i in range(t)]
         iter_seqs = [seq[ran_list[i]: ran_list[i] + k]
                      for i, seq in enumerate(dna_list)]

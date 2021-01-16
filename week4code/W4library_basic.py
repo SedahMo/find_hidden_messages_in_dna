@@ -12,9 +12,9 @@ import random as rd
 def ProfileMatrix(kmer_list, k, t, mode, pseudo_count=1):  # nrow = t, ncol = k
     """Input a list of kmers and output a entropy score or profile probilities.
 
-    It can be switched to hamming distance score following #.
+    It can be switched to hamming distance score by setting mode.
     """
-    matrix = [[0] * k for i in range(4)]  # initiate a zero-filled nested list.
+    matrix = [[0] * k for i in range(4)]  # Initiate a zero-filled nested list.
     for col, colbases in enumerate(zip(*kmer_list)):
         for row, letter in enumerate('ACGT'):
             matrix[row][col] = colbases.count(letter)
@@ -27,7 +27,7 @@ def ProfileMatrix(kmer_list, k, t, mode, pseudo_count=1):  # nrow = t, ncol = k
             matrix[row][col] /= (t + 4 * pseudo_count)
     if mode == 'profile':
         return matrix
-    if mode == 'score':
+    if mode == 'entr':
         # entropy score = sigma(-p*log_2(p)). Max score of 'ACGT' colume is 2.
         score = -sum([matrix[row][col] * m.log2(matrix[row][col])
                      for col in range(k) for row in range(4)])
@@ -60,7 +60,7 @@ def ProfileMostPKmer(sequence, k, matrix):
 def GibbsKmer(sequence, k, matrix):
     """Input a sequence and profile matrix, output a random choice of kmer.
     
-    The kmer is based on gibbssampler.
+    The kmer is based on gibbs sampling.
     """
     p_list = []
     # Generate a probability list along the kmer using profile matrix.
@@ -78,10 +78,10 @@ def GibbsKmer(sequence, k, matrix):
 def ConsensusMotif(sequence_set):
     """Find the consensus motif for the input sequence set."""
     k = len(sequence_set[0])
-    matrix = [[0] * k for i in range(4)]  # initiate a zero-filled nested list.
+    matrix = [[0] * k for i in range(4)]  # Initiate a zero-filled nested list.
     for col, colbases in enumerate(zip(*sequence_set)):
         for row, letter in enumerate('ACGT'):
-            matrix[row][col] = colbases.count(letter)  # Fill with max counts.
+            matrix[row][col] = colbases.count(letter)  # Count nuc in each col.
     convert = {0: 'A', 1: 'C', 2: 'G', 3: 'T'}
     motif = ''.join([convert[col.index(max(col))] for col in zip(*matrix)])
     return motif
