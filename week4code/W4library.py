@@ -8,7 +8,7 @@ Created on Thu Jan 14 00:53:00 2021
 import numpy as np
 
 
-def ProfileMatrix(kmer_list, k, t, mode):  # nrow = t, ncol = k
+def ProfileMatrix(kmer_list, k, t, mode='profile'):  # nrow = t, ncol = k
     """Input a list of kmers and output a entropy score or profile probilities.
 
     It can be switched to hamming distance score following #.
