@@ -27,23 +27,38 @@ def RandomizedMotifSearch(dna_list, k, t):
         if start:
             best_seqs = iter_seqs[:]
             start = False
+            # print('Hi')
         # Inner loop. Jump out of the loop if "derailed".
         while True:
             profile = w4.ProfileMatrix(iter_seqs, k, t, mode='profile')
             iter_seqs = [w4.ProfileMostPKmer(seq, k, profile)
                          for seq in dna_list]
-            if w4.ProfileMatrix(iter_seqs, k, t, mode='score') < \
-               w4.ProfileMatrix(best_seqs, k, t, mode='score'):
+            if w4.ProfileMatrix(iter_seqs, k, t, mode='ham') < \
+               w4.ProfileMatrix(best_seqs, k, t, mode='ham'):
                 best_seqs = iter_seqs[:]
             else:
                 break
-    print(w4.ProfileMatrix(best_seqs, k, t, mode='score'))
+    print(w4.ProfileMatrix(best_seqs, k, t, mode='ham'))
     return best_seqs
 
+# benchmark dataset
+# a=[
+# "ATGACCGGGATACTGATAGAAGAAAGGTTGGGGGCGTACACATTAGATAAACGTATGAAGTACGTTAGACTCGGCGCCGCCG",
+# "ACCCCTATTTTTTGAGCAGATTTAGTGACCTGGAAAAAAAATTTGAGTACAAAACTTTTCCGAATACAATAAAACGGCGGGA",
+# "TGAGTATCCCTGGGATGACTTAAAATAATGGAGTGGTGCTCTCCCGATTTTTGAATATGTAGGATCATTCGCCAGGGTCCGA",
+# "GCTGAGAATTGGATGCAAAAAAAGGGATTGTCCACGCAATCGCGAACCAACGCGGACCCAAAGGCAAGACCGATAAAGGAGA",
+# "TCCCTTTTGCGGTAATGTGCCGGGAGGCTGGTTACGTAGGGAAGCCCTAACGGACTTAATATAATAAAGGAAGGGCTTATAG",
+# "GTCAATCATGTTCTTGTGAATGGATTTAACAATAAGGGCTGGGACCGCTTGGCGCACCCAAATTCAGTGTGGGCGAGCGCAA",
+# "CGGTTTTGGCCCTTGTTAGAGGCCCCCGTATAAACAAGGAGGGCCAATTATGAGAGAGCTAATCTATCGCGTGCGTGTTCAT",
+# "AACTTGAGTTAAAAAATAGGGAGCCCTGGGGCACATACAAGAGGAGTCTTCCTTATCAGTTAATGCTGTATGACACTATGTA",
+# "TTGGCCCATTGGCTAAAAGCCCAACTTGACAAATGGAAGATAGAATCCTTGCATACTAAAAAGGAGCGGACCGAAAGGGAAG",
+# "CTGGTGAGCAACGACAGATTCTTACGTGCATTAGCTCGCTTCCGGGGATCTAATAGCACGAAGCTTACTAAAAAGGAGCGGA",
+# ]
 
 if __name__ == "__main__":
-    with open('dataset_161_5.txt') as f:
-    # with open(input('Please input the path and press enter: \n')) as f:
+    # with open('dataset_161_5.txt') as f:
+    with open(input('Please input the path and press enter: \n')) as f:
+    # with open('dataset_163_4.txt') as f:
         line_list = f.read().splitlines()
         params = line_list.pop(0).split()
         k = int(params[0])
@@ -51,6 +66,9 @@ if __name__ == "__main__":
         dna_list = line_list
     start = time.process_time()
     print(*RandomizedMotifSearch(dna_list, k, t), sep='\n')
+    # motifs = RandomizedMotifSearch(a, 16, 10)
+    # print(*motifs, sep='\n')
+    # print('consensus motif:', w4.ConsensusMotif(motifs))
     end = time.process_time()
     print("Time:", end - start)
 
